@@ -29,9 +29,9 @@ function moveStick(e){const r=movePad.getBoundingClientRect(),cx=r.left+r.width/
 movePad.addEventListener('pointerdown',e=>{e.preventDefault();moveId=e.pointerId;movePad.setPointerCapture(moveId);moveStick(e)});movePad.addEventListener('pointermove',e=>{if(e.pointerId===moveId)moveStick(e)});function resetJoy(){moveId=null;joy={x:0,y:0};knob.style.transform='translate(0,0)'}['pointerup','pointercancel','lostpointercapture'].forEach(n=>movePad.addEventListener(n,resetJoy));
 const gameWrap=document.querySelector('.game-wrap');
 // Drag anywhere on the playable view to turn the camera. Virtual controls retain their own gestures.
-gameWrap.addEventListener('pointerdown',e=>{if(!running||paused||e.target.closest('.mobile-controls,button,select,input,.settings-panel,.overlay'))return;if(e.pointerType==='mouse'&&e.button!==0)return;e.preventDefault();lookTouch={id:e.pointerId,x:e.clientX,y:e.clientY};gameWrap.setPointerCapture(e.pointerId)});
-gameWrap.addEventListener('pointermove',e=>{if(!lookTouch||e.pointerId!==lookTouch.id)return;const dx=e.clientX-lookTouch.x,dy=e.clientY-lookTouch.y;player.a+=dx*.009;player.pitch=Math.max(-H*.16,Math.min(H*.16,player.pitch+dy*.65));lookTouch.x=e.clientX;lookTouch.y=e.clientY});
-['pointerup','pointercancel','lostpointercapture'].forEach(n=>gameWrap.addEventListener(n,e=>{if(lookTouch&&e.pointerId===lookTouch.id)lookTouch=null}));
+gameWrap.addEventListener('pointerdown',e=>{if(!running||paused||e.target.closest('.mobile-controls,button,select,input,.settings-panel,.overlay'))return;if(e.pointerType==='mouse'&&e.button!==0)return;lookTouch={id:e.pointerId,x:e.clientX,y:e.clientY}});
+document.addEventListener('pointermove',e=>{if(!lookTouch||e.pointerId!==lookTouch.id)return;const dx=e.clientX-lookTouch.x,dy=e.clientY-lookTouch.y;player.a+=dx*.009;player.pitch=Math.max(-H*.16,Math.min(H*.16,player.pitch+dy*.65));lookTouch.x=e.clientX;lookTouch.y=e.clientY});
+['pointerup','pointercancel'].forEach(n=>document.addEventListener(n,e=>{if(lookTouch&&e.pointerId===lookTouch.id)lookTouch=null}));
 
 canvas.addEventListener('click',()=>{if(running&&!paused&&matchMedia('(pointer:fine)').matches&&document.pointerLockElement!==canvas)canvas.requestPointerLock?.()});
 document.addEventListener('mousemove',e=>{if(document.pointerLockElement===canvas&&running&&!paused)player.a+=e.movementX*.0025});
